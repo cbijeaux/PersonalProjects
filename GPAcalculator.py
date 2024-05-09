@@ -28,7 +28,7 @@ def deleteClass(filedirectory,allfiles):
     for file in allfiles:
         counter+=1
         print(f'{counter}) {file}\n')
-    answer=int(input(f'Please choose a file above to delete'))-1
+    answer=int(input(f'Please choose a file above to delete\n'))-1
     directory.deleteFilefromDirectory(filedirectory,allfiles[answer])
     del allfiles[answer]
 def saveClass(filedirectory,filename,data):
@@ -54,11 +54,11 @@ def addGrades(gpaclass):
         gpaclass.addBatchGrades(section,map(int,grades))
     else:
         grades=int(grades)
-        gpaclass.addGrade(section,grades)
+        gpaclass.addGrades(section,grades)
 def addCriteria(gpaclass):
     section=input(f'Please enter the name of the section:\n')
     percentage=input(f'Please enter the percentage of the section on the final grade (example: %15 or 15):\n')
-    gpaclass.addCriteria(section,percentage/100)
+    gpaclass.addCriteria(section,int(percentage)/100)
 def removeCriteria(gpaclass):
     counter=0
     for element in gpaclass.pullSections():
@@ -87,7 +87,7 @@ def mainMenu(allfiles,directorypathing):
         print(f'Please start by creating a course file\n')
         choice=1
     else:
-        choice=input(f'Please choose from the following options:\n1: create class file\n2: load class file\n3:Delete Class File')
+        choice=input(f'Please choose from the following options:\n1: create class file\n2: load class file\n3: Delete Class File\n')
     if int(choice)==2 and len(allfiles)==0 or int(choice)==3 and len(allfiles)==0:
         print(f'Error: There are no files to load from or remove, please either choose to create a class file or close the program\n')
         mainMenu(allfiles,directorypathing)
@@ -110,7 +110,7 @@ while notfinished:
     choice=input(f'Please choose an option below:\n1)Add Criteria or grade\n2)Remove criteria or grade\n3)See Current Final Grade\n4)Check what I need on final assignment/exam for a certain grade\n5)see all grades\n6)Save and Return to Main Menu\n7)Save and Exit Program\n')
     realchoice=int(choice)
     if realchoice==1:
-        choice=input(f'please choose an options below:\n1)Add Criteria\n2) Add Grade\n')
+        choice=input(f'please choose an options below:\n1) Add Criteria\n2) Add Grade\n')
         if choice=='1':
             addCriteria(gpa)
         else:

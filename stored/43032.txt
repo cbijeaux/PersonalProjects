@@ -1,2 +1,0 @@
-section,exam,0.5
-section,homework,0.5

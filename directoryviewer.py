@@ -6,4 +6,4 @@ class directory:
         return os.listdir(directorypathing)
     @staticmethod
     def deleteFilefromDirectory(directorypathing,titleoffile):
-        os.remove(os.join(directorypathing,titleoffile))
+        os.remove(os.path.join(directorypathing,titleoffile))
