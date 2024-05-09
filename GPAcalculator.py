@@ -15,6 +15,8 @@ def loadClass(filedirectory,allfiles):
         print(f'{counter}) {file}\n')
     choice=int(input(f'Please choose a file above to load\n'))-1
     filename=allfiles[choice]
+    if '.txt' not in filename:
+        filename+='.txt'
     gpa=WeightedGPA()
     filewriter=open(os.path.join(filedirectory,filename),'r')
     results=filewriter.readlines()
@@ -25,7 +27,7 @@ def deleteClass(filedirectory,allfiles):
     for file in allfiles:
         counter+=1
         print(f'{counter}) {file}\n')
-    answer=int(input(f'Please choose a file above to delete')-1
+    answer=int(input(f'Please choose a file above to delete'))-1
     directory.deleteFilefromDirectory(filedirectory,allfiles[answer])
     del allfiles[answer]
 def saveClass(filedirectory,filename,data):
@@ -47,7 +49,7 @@ def addGrades(gpaclass):
     grades=input(f'you can Either input a single grade, or input multiple grades with a comma in bewteen each grade:\n')
     grades=grades.strip()
     if ',' in grades:
-        grades=grades.split(',)
+        grades=grades.split(',')
         gpaclass.addBatchGrades(section,map(int,grades))
     else:
         grades=int(grades)
