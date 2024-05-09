@@ -14,8 +14,8 @@ class WeightedGPA:
         def removeCriteria(self,title):
             del self._classgpa[title]
             del self._grades[title]
-        def removeGrades(self,title,grade=-1)
-            if index==-1:
+        def removeGrades(self,title,grade=-1):
+            if grade==-1:
                 del self._grades[title]
             else:
                 self._grades.remove(grade)
