@@ -99,6 +99,7 @@ while notfinished:
         print(gpa)
     elif realchoice==5:
         saveClass(directorypathing,title,gpa.convertData())
+        print(f'Save Completed! Returning to Main Menu)'
         mainMenu(allfiles,directorypathing)
     elif realchoice==6:
         saveClass(directorypathing,title,gpa.convertData())
