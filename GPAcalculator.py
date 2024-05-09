@@ -10,6 +10,7 @@ def pathing_creator(folder):
     return os.path.join(path,folder)
 def loadClass(filedirectory,allfiles):
     counter=0
+    global filename
     for file in allfiles:
         counter+=1
         print(f'{counter}) {file}\n')
@@ -73,13 +74,14 @@ def removeGrade(gpaclass):
     choice=int(input(f'Please choose a section you would like to remove a grade from'))
     grade=gpaclass.pullGrades(gpaclass.pullSections()[choice])
     if len(grade)==1:
-        gpaclass.removeGrade(title)
+        gpaclass.removeGrade(gpaclass.pullSections()[choice])
     else:
         print(grade)
         choice=int(input(f'Please enter a grade you would like to remove, or -1 if you wish to remove all the grades from the section\n'))
-        gpaclassremoveGrade(title,choice)
+        gpaclass.removeGrade(gpaclass.pullSections()[choice],choice)
 def mainMenu(allfiles,directorypathing):
     global gpa
+    global filename
     if len(allfiles)==0:
         print(f'You currently have no saved course files within the program.\n')
         print(f'Please start by creating a course file\n')
@@ -95,7 +97,7 @@ def mainMenu(allfiles,directorypathing):
     if int(choice)==2:
         gpa=loadClass(directorypathing,allfiles)
     elif int(choice)==1:
-        title=input(f'Please enter the identifier you want for this course\n').strip()+f'.txt'
+        filename=input(f'Please enter the identifier you want for this course\n').strip()+f'.txt'
         gpa=WeightedGPA()
     
                                 
@@ -118,7 +120,7 @@ while notfinished:
         if choice==1:
             gpa.removeCriteria(gpa)
         elif choice==2:
-            gpa.removeGrade(gpa)
+            gpa.removeGrades(gpa)
     elif realchoice==3:
         print(f'Your final grade in this class so far is {gpa.getFinalGrade()}\nNOTE: accuracy of the final grade is dependent on whether all the grades have been entered or not\n')
     elif realchoice==4:
@@ -127,10 +129,10 @@ while notfinished:
     elif realchoice==5:
         print(gpa)
     elif realchoice==6:
-        saveClass(directorypathing,title,gpa.convertData())
-        print(f'Save Completed! Returning to Main Menu)'
+        saveClass(directorypathing,filename,gpa.convertData())
+        print(f'Save Completed! Returning to Main Menu')
         mainMenu(allfiles,directorypathing)
     elif realchoice==7:
-        saveClass(directorypathing,title,gpa.convertData())
+        saveClass(directorypathing,filename,gpa.convertData())
         notfinished=False
 print(f'Save Completed! GoodBye')
