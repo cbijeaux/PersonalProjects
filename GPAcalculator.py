@@ -9,7 +9,8 @@ def pathing_creator(folder):
         path=os.path.dirname(__file__)
     return os.path.join(path,folder)
 def loadClass(filename,filedirectory):
-    filename=f'{filename}'
+    if '.txt' not in filename:
+        filename+='.txt'
     gpa=WeightedGPA()
     filewriter=open(os.path.join(filedirectory,filename),'r')
     results=filewriter.readlines()
@@ -47,9 +48,9 @@ if int(choice)==2:
     choice=int(input(f'Please choose a file above to load\n'))-1
     title=loadClass(allfiles[choice],directorypathing)
 elif int(choice)==1:
-    title=input(f'Please enter the identifier you want for this course\n').strip()+f'.txt'
+    title=input(f'Please enter the identifier you want for this course\n').strip()
 
-gpa=loadClass(f'{title}') if int(choice)==2 else WeightedGPA()
+gpa=loadClass(title) if int(choice)==2 else WeightedGPA()
 
 notfinished=True
 while notfinished:
