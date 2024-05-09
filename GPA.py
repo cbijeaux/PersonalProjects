@@ -11,11 +11,21 @@ class WeightedGPA:
                     self.addGrades(element[1],element[2])
         def addCriteria(self,title,percentage):
             self._classgpa[title]=percentage
+        def removeCriteria(self,title):
+            del self._classgpa[title]
+            del self._grades[title]
+        def removeGrades(self,title,grade=-1)
+            if index==-1:
+                del self._grades[title]
+            else:
+                self._grades.remove(grade)
         def addGrades(self,title,grade):
             if self._grades.get(title):
                 self._grades[title].append(grade)
             else:
                 self._grades[title]=[grade]
+        def pullGrades(self,title):
+            return self._grades[title]
         def addBatchGrades(self,title,batchofgrades): 
             for grade in batchofgrades:
                 self.addGrades(title,grade)
