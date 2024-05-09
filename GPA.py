@@ -89,7 +89,15 @@ class WeightedGPA:
                 container.append([f'grade',element,','.join(map(str,self._grades[element]))])
             return container
         def __str__(self):
-            return
+                container=''
+                for element in self.pullSections():
+                        section=self._classgpa[element]
+                        grades=self._grades[element]
+                        average=self.calculateSection(element)
+                        container+=f'{section}:\n\tGrades Earned:{grades}\n'
+                        container+=f'\tAverage:{average/self._classgpa[element]}\n'
+                container+=f'Current Weighted Final grade:{self.getFinalGrade()}'
+            return container
 
 
 
