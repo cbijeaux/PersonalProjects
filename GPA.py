@@ -1,9 +1,14 @@
 import math 
-class GPA:
+class WeightedGPA:
         def __init__(self):
-                self._totalgrade=0
                 self._classgpa={}
                 self._grades={}
+        def addMassData(self,massdata): #[classification,title,grade/percentage]
+            for element in massdata:
+                if element[0]=='section':
+                    self.addCriteria(element[1],element[2])
+                else:
+                    self.addGrades(element[1],element[2])
         def addCriteria(self,title,percentage):
             self._classgpa[title]=percentage
         def addGrades(self,title,grade):
@@ -11,34 +16,44 @@ class GPA:
                 self._grades[title].append(grade)
             else:
                 self._grades[title]=[grade]
-        def addBatchGrades(self,title,batchofgrades):
-            self._grades[title]=batchofgrades  
+        def addBatchGrades(self,title,batchofgrades): 
+            for grade in batchofgrades:
+                self.addGrades(title,grade)
         def calculateCurrentGrade(self):
             total=0
             for element in list(self._grades):
                 if self._grades.get(element):
                     total+=(sum(self._grades[element])/len(self._grades[element]))*self._classgpa[element]
             return total
-        def getFinalGrades(self):
-            print(self.calculateCurrentGrade())
+        def getFinalGrade(self):
+            return self.calculateCurrentGrade()
         def calcualteSection(self,title):
             return (sum(self._grades[title])/len(self._grades))*self._classgpa[title]
+        def pullSections(self):
+            return list(self._classgpa.keys())
         def calculateGroupGradeRequired(self,title):
-            grades={"C":70,"B":80,"A":90}
-            container=''
-            currentsectionaverage=self.calcualteSection(title)
+            grades={"A":90,"B":80,"C":70}
+            container=f'The result for possible final grade depending on the final {title} grade:\n'
+            percentage=self._classgpa[title]
             currentgrade=self.calculateCurrentGrade()
+            numberoftotalgrades=len(self._grades[title])+1
+            totalgradesofcurrentsection=sum(self._grades[title])
+            gradeswithoutsection=currentgrade-self.calcualteSection(title)
+            minresult=gradeswithoutsection+(percentage*(totalgradesofcurrentsection/(numberoftotalgrades)))
+            maxresult=gradeswithoutsection+(percentage*((totalgradesofcurrentsection+100)/(numberoftotalgrades)))
             for element in list(grades):
-                needed=grades[element]-(currentgrade-currentsectionaverage)
-                if needed<0:
+                if minresult>grades[element]:
                     container+=f'{element} grade guaranteed\n'
-                elif needed>self._classgpa[title]*100:
+                elif maxresult<grades[element]:
                     container+=f'{element} grade not possible\n'
-                else: 
-                    
+                else:
+                    sectionneeded=(((grades[element]-gradeswithoutsection)/percentage)*(numberoftotalgrades))-totalgradesofcurrentsection
+                    sectionneeded=math.ceil(sectionneeded)
+                    container+=f'{element} Grade requires a grade of at least {sectionneeded} on the final {title}\n'
+            print(container)
         def calculateInidivualGradeRequired(self,title):
-            grades={"C":70,"B":80,"A":90}
-            container=''
+            grades={"A":90,"B":80,"C":70}
+            container=f'The result for possible final grade(s) depending on the {title} grade:\n'
             current=self.calculateCurrentGrade()
             percentage=self._classgpa[title]
             for element in list(grades):
@@ -66,21 +81,16 @@ class GPA:
                     self.calculateGroupGradeRequired(title)
                 else: 
                     self.calculateInidivualGradeRequired(title)
+        def convertData(self):
+            container=[]
+            for element in list(self._classgpa):
+                container.append([f'section',element,str(self._classgpa[element])])
+            for element in list(self._grades):
+                container.append([f'grade',element,','.join(map(str,self._grades[element]))])
+            return container
+        def __str__(self):
+            return
 
-            
-gpa=GPA()
-gpa.addCriteria(f'examone',.15)
-gpa.addCriteria(f'examtwo',.15)
-gpa.addCriteria(f'homework',.15)
-gpa.addCriteria(f'quiz',.15)
-gpa.addCriteria(f'project',.40)
-gpa.addBatchGrades(f'homework',[100,90])
-gpa.addBatchGrades(f'quiz',[100,80])
-gpa.addGrades(f'examone',81)
-gpa.addGrades(f'examtwo',74)
-gpa.addGrades(f'project',40)
-gpa.getFinalGrades()
-gpa.whatDoINeed(f'homework')
 
 
 
