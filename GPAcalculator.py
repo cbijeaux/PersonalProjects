@@ -99,8 +99,23 @@ def mainMenu(allfiles,directorypathing):
     elif int(choice)==1:
         filename=input(f'Please enter the identifier you want for this course\n').strip()+f'.txt'
         gpa=WeightedGPA()
-    
-                                
+def subAddMenu(gpaclass,allfiles,directorypathing):
+    choice=input(f'please choose an options below:\n1) Add Criteria\n2) Add Grade\n3) Return to main menu\n')
+    if choice=='1':
+        addCriteria(gpaclass)
+    elif choice=='2':
+        addGrades(gpaclass)
+    else:
+        mainMenu(allfiles,directorypathing)
+def subRemoveMenu(gpaclass,allfiles,directorypathing):
+    choice=int(input(f'Please choose an options below:\n1) Remove Criteria\n2) Remove Grade'))
+    if choice==1:
+        gpa.removeCriteria(gpaclass)
+    elif choice==2:
+        gpa.removeGrades(gpaclass)
+    elif choice==3:
+        mainMenu(allfiles,directorypathing)
+
 notfinished=True
 directorypathing=pathing_creator(f'stored')
 allfiles=directory.pullAllDirectoryFiles(directorypathing)
@@ -110,11 +125,7 @@ while notfinished:
     choice=input(f'Please choose an option below:\n1)Add Criteria or grade\n2)Remove criteria or grade\n3)See Current Final Grade\n4)Check what I need on final assignment/exam for a certain grade\n5)see all grades\n6)Save and Return to Main Menu\n7)Save and Exit Program\n')
     realchoice=int(choice)
     if realchoice==1:
-        choice=input(f'please choose an options below:\n1) Add Criteria\n2) Add Grade\n')
-        if choice=='1':
-            addCriteria(gpa)
-        else:
-            addGrades(gpa)
+        subAddMenu(gpa,allfiles,directorypathing)
     elif realchoice==2:
         choice=int(input(f'Please choose an options below:\n1) Remove Criteria\n2) Remove Grade'))
         if choice==1:
