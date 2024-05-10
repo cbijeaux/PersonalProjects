@@ -68,7 +68,11 @@ class UserInterface:
                 self.viewAllGrades()
             elif choice==6:
                 self.saveCourse()
-                self.fileMenu()
+                if self.fileMenu():
+                    self.mainMenu()
+                    return
+                else:
+                    self.crashMessage('INVALID')
             elif choice==7:
                 self.saveCourse()
                 return
