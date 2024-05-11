@@ -45,11 +45,20 @@ class UserInterface:
     def selectFile(self):
         self.showFiles()
         choice=int(input(f'Please choose one of the file(s) above:\n'))-1
-        return self._directoryfiles[choice]
+        try:
+            return self._directoryfiles[choice]
+        except:
+            self.crashMessage('INVALID')
     def finalGrade(self):
         print(f'Current Final Grade for the Course:\n{self._gpa.getFinalGrade()}\nNOTE: final grade calculated based on currently inputted grades and sections and may not reflect actual final grade if data is either incomplete or inaccurate\n')
     def whatDoINeed(self):
-        return
+        self.showSections()
+        choice=int(input(f'Please choose the section where the final grade belongs to:\n'))-1
+        try:
+            choice=self._gpa.pullSections()[choice]
+            self._gpa.whatDoINeed(choice)
+        except:
+            self.crashMessage(f'INVALID')
     def viewAllGrades(self):
         print(str(self._gpa))
     def mainMenu(self):
@@ -82,9 +91,7 @@ class UserInterface:
         notfinished=False
         while notfinished:
             choice=int(input(f'Please choose one of the following options:\n1) Add Section\n2) Add Grade\n3) Return To Main Menu\n'))
-            if choice>3 or choice<1:
-                self.crashMessage(f'INVALID')
-            elif choice==1:
+            if choice==1:
                 self.addCriteria()
             elif choice==2:
                 self.addGrades()
@@ -98,18 +105,21 @@ class UserInterface:
         choice=input(f'Please input the name of the section you want to add:\n')
         percentage=int(input(f'Please enter the percentage of the course (example: %50 or 50)\n'))
         self._gpa.addCriteria(choice,percentage)
-    def removeCriteria(self):
+    def showSections(self):
         counter=0
         for element in self._gpa.pullSections():
             counter+=1
             print(f'{counter}) {element}')
+    def removeCriteria(self):
+        self.showSections()
         choice=int(input(f'Please choose a criteria to remove (This will remove all grades for that criteria as well)\n'))-1
-        if choice>=counter or choice<=-1:
+        try: 
+            choice=self._gpa.pullSections()[choice]
+            self._gpa.removeCriteria(choice)
+            return True
+        except:
             self.crashMessage('INVALID')
             return False
-        else:
-            self._gpa.removeCriteria(self._gpa.pullSections()[choice])
-            return True
     def addGrades(self):
         counter=0
         for element in self._gpa.pullSections():
@@ -151,7 +161,7 @@ class UserInterface:
         print(f'XXXXXXXXXXXXXXXXXXX\nFile Saved Successfully!\nXXXXXXXXXXXXXXXXXXX')
     def crashMessage(self,reason):
         return
-    def loadInterface(self,message):
+    def loadInterface(self):
         self.intro()
         if self.fileMenu():
             self.mainMenu()
