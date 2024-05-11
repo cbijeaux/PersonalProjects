@@ -1,12 +1,22 @@
 from directoryviewer import directory
 from GPA import WeightedGPA
-import os,sys
+import os
 class UserInterface:
     def __init__(self,pathing):
         self._directoryfiles=directory.pullAllDirectoryFiles(pathing)
         self._directorypath=pathing
         self._gpa= WeightedGPA()
         self._targetfile=''
+        self._crashmessages={
+            'NONEFOUNDFILE2':'You are unable to load any files as the directory is empty. Returning to file Menu',
+            'NONEFOUNDFILE3': 'You are unable to delete any files as the directory is empty. Returning to file Menu',
+            'INVALIDMAINCHOICE': 'Please choose from the following options presented only', 
+            'INVALIDFILECHOICE' : 'Please choose from the following options presented only',
+            'INVALIDSUBCHOICE':'Please choose from the following options presented only'}
+    def endProgram(self):
+        exit()
+    def pressToContinue(self):
+        input(f'press enter to continue\n')
     def recheckDirectory(self):
         self._directoryfiles=directory.pullAllDirectoryFiles(self._directorypath)
     def intro(self):
@@ -18,21 +28,18 @@ class UserInterface:
             self.createCourse()
         elif choice==2:
             if self.isEmptyDir():
-                self.crashMessage(f'NONEFOUND')
-                return False
+                self.crashMessage(f'NONEFOUNDFILE2')
             filename=self.selectFile()
             self.loadCourse(filename)
         elif choice==3:
             if self.isEmptyDir():
-                self.crashMessage(f'NONEFOUND')
-                return False
+                self.crashMessage(f'NONEFOUNDFILE3')
             filename=self.selectFile()
             self.deleteCourse(filename)
             return self.fileMenu()
         else:
-            self.crashMessage('INVALID')
-            return False
-        return True
+            self.crashMessage('INVALIDMAINCHOICE')
+        self.mainMenu()
     def isEmptyDir(self):
         return len(self._directoryfiles)==0
     def showFiles(self):
@@ -48,9 +55,10 @@ class UserInterface:
         try:
             return self._directoryfiles[choice]
         except:
-            self.crashMessage('INVALID')
+            self.crashMessage('INVALIDFILECHOICE')
     def finalGrade(self):
         print(f'Current Final Grade for the Course:\n{self._gpa.getFinalGrade()}\nNOTE: final grade calculated based on currently inputted grades and sections and may not reflect actual final grade if data is either incomplete or inaccurate\n')
+        self.pressToContinue()
     def whatDoINeed(self):
         self.showSections()
         choice=int(input(f'Please choose the section where the final grade belongs to:\n'))-1
@@ -58,53 +66,62 @@ class UserInterface:
             choice=self._gpa.pullSections()[choice]
             self._gpa.whatDoINeed(choice)
         except:
-            self.crashMessage(f'INVALID')
+            self.crashMessage(f'INVALIDSUBCHOICE')
+        self.pressToContinue()
     def viewAllGrades(self):
         print(str(self._gpa))
+        self.pressToContinue()
     def mainMenu(self):
-        notfinished=True
-        while notfinished:
-            choice=int(input(f'Please choose an option below:\n1)Add Criteria or grade\n2)Remove criteria or grade\n3)See Current Final Grade\n4)Check what I need on final assignment/exam for a certain grade\n5)see all grades\n6)Save and Return to Main Menu\n7)Save and Exit Program\n'))
-            if choice==1:
-                self.subAddMenu()
-            elif choice==2:
-                self.subRemoveMenu()
-            elif choice==3:
-                self.finalGrade()
-            elif choice==4:
-                self.whatDoINeed()
-            elif choice==5:
-                self.viewAllGrades()
-            elif choice==6:
-                self.saveCourse()
-                if self.fileMenu():
-                    self.mainMenu()
-                    return
-                else:
-                    self.crashMessage('INVALID')
-            elif choice==7:
-                self.saveCourse()
-                return
-            else:
-                self.crashMessage('INVALID')
+        choice=int(input(f'Please choose an option below:\n1)Add Criteria or grade\n2)Remove criteria or grade\n3)See Current Final Grade\n4)Check what I need on final assignment/exam for a certain grade\n5)see all grades\n6)Save Course\n7)Save Course and Return to File Menu\n8)Save and Exit Program\n'))
+        if choice==1:
+            self.subAddMenu()
+        elif choice==2:
+            self.subRemoveMenu()
+        elif choice==3:
+            self.finalGrade()
+        elif choice==4:
+            self.whatDoINeed()
+        elif choice==5:
+            self.viewAllGrades()
+        elif choice==6:
+            self.saveCourse()
+            self.mainMenu()
+        elif choice==7:
+            self.saveCourse()
+            self.fileMenu()
+        elif choice==8:
+            self.saveCourse()
+            self.endProgram()
+        else:
+            self.crashMessage('INVALIDMAINCHOICE')
     def subAddMenu(self):
-        notfinished=False
-        while notfinished:
-            choice=int(input(f'Please choose one of the following options:\n1) Add Section\n2) Add Grade\n3) Return To Main Menu\n'))
-            if choice==1:
-                self.addCriteria()
-            elif choice==2:
-                self.addGrades()
-            elif choice==3:
-                self.mainMenu()
-            else:
-                self.crashMessage('INVALID')
+        choice=int(input(f'Please choose one of the following options:\n1) Add Section\n2) Add Grade\n3) Return To Main Menu\n'))
+        if choice==1:
+            self.addCriteria()
+        elif choice==2:
+            self.addGrades()
+        elif choice==3:
+            self.mainMenu()
+        else:
+            self.crashMessage('INVALIDSUBCHOICE')
+        self.subAddMenu()
     def subRemoveMenu(self):
-        return
+        choice=int(input(f'Please choose from an option below:\n1) Remove Grades\n2) Remove Criteria\n3) Return to Main Meny'))
+        if choice==1:
+            self.removeGrades()
+        elif choice==2:
+            self.removeCriteria()
+        elif choice==3:
+            self.mainMenu()
+        else:
+            self.crashMessage('INVALIDSUBCHOICE')
+        self.subRemoveMenu()
     def addCriteria(self):
         choice=input(f'Please input the name of the section you want to add:\n')
         percentage=int(input(f'Please enter the percentage of the course (example: %50 or 50)\n'))
         self._gpa.addCriteria(choice,percentage)
+        self.pressToContinue()
+        self.subAddMenu()
     def showSections(self):
         counter=0
         for element in self._gpa.pullSections():
@@ -116,10 +133,33 @@ class UserInterface:
         try: 
             choice=self._gpa.pullSections()[choice]
             self._gpa.removeCriteria(choice)
-            return True
+            self.pressToContinue()
+            self.subRemoveMenu()
         except:
-            self.crashMessage('INVALID')
+            self.crashMessage('INVALIDSUBCHOICE')
             return False
+    def removeGrades(self):
+        self.showSections()
+        choiceone=int(input(f'Please choose one of the sections above to remove grade(s) from:\n'))
+        grades=self._gpa.pullGrades(self._gpa.pullSections[choiceone])
+        print(grades)
+        choice=int(input(f'Please choose a choice below:\n1) Remove one grade\n2) Remove All Grades\n3) Return To Main Menu'))
+        if choice==1:
+            print(grades)
+            choice=int(input(f'Please enter the grade that needs to be removed\n'))
+            try:
+                index=grades.idex(choice)
+                self._gpa.removeGrades(self._gpa.pullSections[choiceone],index)
+            except:
+                self.crashMessage('INVALIDSUBCHOICE')
+        elif choice==2:
+            self._gpa.removeGrades(self._gpa.pullSections[choiceone])
+        elif choice==3:
+            self.mainMenu()
+        else:
+            self.crashMessage('INVALIDSUBCHOICE')
+        self.pressToContinue()
+        self.subRemoveMenu()
     def addGrades(self):
         counter=0
         for element in self._gpa.pullSections():
@@ -128,13 +168,12 @@ class UserInterface:
         choice=int(input(f'Please choose a section to add a grade for above:\n'))-1
         grade=input(f'Please enter either a singular grade earned or multiple grades with comma as the separator\n')
         if choice>=counter or choice<=-1:
-            self.crashMessage('INVALID')
-            return False
+            self.crashMessage('INVALIDSUBCHOICE')
         elif ',' in grade:
             self._gpa.addBatchGrades(self._gpa.pullSections()[choice],map(int,grade.strip().split(',')))
         else:
             self._gpa.addGrades(self._gpa.pullSections()[choice],int(grade))
-        return True
+        self.pressToContinue()
     def loadCourse(self,filename):
         if '.txt' not in filename:
             filename+='.txt'
@@ -143,11 +182,13 @@ class UserInterface:
         filewriter=open(os.path.join(self._directorypath,filename),'r')
         results=filewriter.readlines()
         self._gpa.addMassData(results)
+        print(f'File Loaded Successfully!')
+        self.mainMenu()
     def deleteCourse(self,filename):
         directory.deleteFilefromDirectory(self._directorypath,filename)
         self.recheckDirectory()
         print(f'XXXXXXXXXXXXXXXXXXX\nFile Deleted Successfully!\nXXXXXXXXXXXXXXXXXXX')
-        return True
+        self.fileMenu()
     def createCourse(self):
         coursename=input(f'Please enter the name of the course:\n')
         self._targetfile=f'{coursename}.txt'
@@ -160,9 +201,17 @@ class UserInterface:
         self.recheckDirectory()
         print(f'XXXXXXXXXXXXXXXXXXX\nFile Saved Successfully!\nXXXXXXXXXXXXXXXXXXX')
     def crashMessage(self,reason):
-        return
+        print(self._crashmessages[reason])
+        if 'SUB' in reason:
+            print(f'Returning to Main Menu')
+            self.pressToContinue()
+        elif 'MAIN' in reason:
+            print(f'Returing to Main Menu')
+            self.pressToContinue()
+        elif 'FILE' in reason:
+            print(f'Returning to File Menu')
+            self.pressToContinue()
     def loadInterface(self):
         self.intro()
-        if self.fileMenu():
-            self.mainMenu()
+        self.fileMenu()
 
