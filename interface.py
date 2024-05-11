@@ -40,7 +40,7 @@ class UserInterface:
             self.deleteCourse(filename)
             return self.fileMenu()
         else:
-            self.crashMessage('INVALIDMAINCHOICE')
+            self.crashMessage('INVALIDFILECHOICE')
         self.mainMenu()
     def isEmptyDir(self):
         return len(self._directoryfiles)==0

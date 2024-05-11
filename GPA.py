@@ -11,19 +11,26 @@ class WeightedGPA:
                     self.addGrades(element[1],element[2])
         def addCriteria(self,title,percentage):
             self._classgpa[title]=percentage
+            print(f'{title} worth {percentage} of the final grade added!')
         def removeCriteria(self,title):
+            print(f'{title} removed alongside grades from that section')
             del self._classgpa[title]
             del self._grades[title]
         def removeGrades(self,title,grade=-1):
             if grade==-1:
                 del self._grades[title]
+                print(f'All grades removed from {title}')
             else:
+                targetgrade=self._grades[title][grade]
                 self._grades.remove(grade)
+                print(f'Grade of {targetgrade} removed from {title}')
         def addGrades(self,title,grade):
             if self._grades.get(title):
                 self._grades[title].append(grade)
+                print(f'Grade Added to {title}')
             else:
                 self._grades[title]=[grade]
+                print(f'All Grades added to {title}')
         def pullGrades(self,title):
             return self._grades[title]
         def addBatchGrades(self,title,batchofgrades): 
@@ -77,15 +84,15 @@ class WeightedGPA:
                     container+=f'{element} Grade requires {finalrequired} in {title}\n'
             print(container)
         def checkAmountNotGrades(self):
-            total=0
-            for element in self._classgpa:
+            emptysections=[]
+            for element in self._clsasgpa:
                 if not self._grades.get(element):
-                    total+=1
-            return total
+                    emptysections.append(element)
+            return emptysections
         def whatDoINeed(self,title):
             empty=self.checkAmountNotGrades()
-            if empty>1:
-                print(f'Can only calculate possible final grades if only one requirement is not yet filled. Please check your inputted grades again\n')
+            if len(empty)>1 or (title not in empty and len(empty)==1):
+                print(f'Can only calculate possible final grades if:\n1) There is only one section with an empty grade (and the user targets that section)\n2)There no empty sections other than the final one needed to be calcuated (assuming that there is another grade for that section that needs to be entered)\n. Please check your inputted grades again\n')
             else:
                 if len(self._grades[title])>1:
                     self.calculateGroupGradeRequired(title)
