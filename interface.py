@@ -173,7 +173,7 @@ class UserInterface:
         for element in self._gpa.pullSections():
             counter+=1
             print(f'{counter}) {element}')
-        choice=self.sanitizeInput(input(f'Please choose a section to add a grade for above:\n','SUB'))-1
+        choice=self.sanitizeInput(input(f'Please choose a section to add a grade for above:\n'),'SUB')-1
         grade=input(f'Please enter either a singular grade earned or multiple grades with comma as the separator\n')
         if choice>=counter or choice<=-1:
             self.crashMessage('INVALIDSUBCHOICE')

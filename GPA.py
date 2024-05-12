@@ -3,17 +3,28 @@ class WeightedGPA:
         def __init__(self):
                 self._classgpa={}
                 self._grades={}
+                self._percentage=0
         def addMassData(self,massdata): #[classification,title,grade/percentage]
             for element in massdata:
                 if element[0]=='section':
                     self.addCriteria(element[1],element[2])
                 else:
                     self.addGrades(element[1],element[2])
+        def checkPercentage(self,newpercentage):
+            if self._percentage+newpercentage>100:
+                return False
+            else:
+                return True
         def addCriteria(self,title,percentage):
-            self._classgpa[title]=percentage
-            print(f'{title} worth {percentage} of the final grade added!')
+            if self.checkPercentage(percentage):
+                self._classgpa[title]=percentage
+                self._percentage+=percentage
+                print(f'{title} worth {percentage} of the final grade added!')
+            else:
+                print(f'Total percentage cannot exceed %100. Please double check the criteria percentage before inputting it')
         def removeCriteria(self,title):
             print(f'{title} removed alongside grades from that section')
+            self._percentage-=self._classgpa[title]
             del self._classgpa[title]
             del self._grades[title]
         def removeGrades(self,title,grade=-1):
