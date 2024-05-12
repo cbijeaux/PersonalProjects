@@ -21,7 +21,7 @@ class WeightedGPA:
                 self._percentage+=percentage
                 print(f'{title} worth {percentage} of the final grade added!')
             else:
-                print(f'Total percentage cannot exceed %100. Please double check the criteria percentage before inputting it')
+                print(f'Total percentage cannot exceed %100. Please double check the criteria percentage before inputting it. Section not entered in Course')
         def removeCriteria(self,title):
             print(f'{title} removed alongside grades from that section')
             self._percentage-=self._classgpa[title]
@@ -118,9 +118,13 @@ class WeightedGPA:
             return container
         def __str__(self):
             container=''
+
             for element in self.pullSections():
                     section=self._classgpa[element]
-                    grades=self._grades[element]
+                    try:
+                        grades=self._grades[element]
+                    except:
+                        grades=f'None Entered'
                     average=self.calculateSection(element)
                     container+=f'{section}:\n\tGrades Earned:{grades}\n'
                     container+=f'\tAverage:{average/self._classgpa[element]}\n'
