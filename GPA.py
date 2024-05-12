@@ -6,20 +6,26 @@ class WeightedGPA:
                 self._percentage=0
         def addMassData(self,massdata): #[classification,title,grade/percentage]
             for element in massdata:
+                element=element.split(',')
                 if element[0]=='section':
-                    self.addCriteria(element[1],element[2])
+                    self.addCriteria(element[1],int(element[2]),False)
+                elif '|' in element[2]:
+                    grades=element[2].split('|')
+                    map(int,element[2].split('|'))
+                    self.addBatchGrades(element[1],grades,False)
                 else:
-                    self.addGrades(element[1],element[2])
+                    self.addGrades(element[1],int(element[2]),False)
         def checkPercentage(self,newpercentage):
             if self._percentage+newpercentage>100:
                 return False
             else:
                 return True
-        def addCriteria(self,title,percentage):
+        def addCriteria(self,title,percentage,message=True):
             if self.checkPercentage(percentage):
                 self._classgpa[title]=percentage
                 self._percentage+=percentage
-                print(f'{title} worth {percentage} of the final grade added!')
+                if message:
+                    print(f'{title} worth {percentage} of the final grade added!')
             else:
                 print(f'Total percentage cannot exceed %100. Please double check the criteria percentage before inputting it. Section not entered in Course')
         def removeCriteria(self,title):
@@ -35,28 +41,32 @@ class WeightedGPA:
                 targetgrade=self._grades[title][grade]
                 self._grades.remove(grade)
                 print(f'Grade of {targetgrade} removed from {title}')
-        def addGrades(self,title,grade):
+        def addGrades(self,title,grade,message=True):
             if self._grades.get(title):
-                self._grades[title].append(grade)
-                print(f'Grade Added to {title}')
+                self._grades[title].append(int(grade))
+                if message:
+                    print(f'Grade of {grade} Added to {title}')
             else:
-                self._grades[title]=[grade]
-                print(f'All Grades added to {title}')
+                self._grades[title]=[int(grade)]
+                if message:
+                    print(f'Grade of {grade} added to {title}')
         def pullGrades(self,title):
             return self._grades[title]
-        def addBatchGrades(self,title,batchofgrades): 
+        def addBatchGrades(self,title,batchofgrades,message=True): 
             for grade in batchofgrades:
-                self.addGrades(title,grade)
+                self.addGrades(title,grade,message)
         def calculateCurrentGrade(self):
             total=0
             for element in list(self._grades):
                 if self._grades.get(element):
-                    total+=(sum(self._grades[element])/len(self._grades[element]))*self._classgpa[element]
+                    total+=(sum(self._grades[element])/len(self._grades[element]))*(self._classgpa[element]/100)
             return total
         def getFinalGrade(self):
             return self.calculateCurrentGrade()
-        def calcualteSection(self,title):
-            return (sum(self._grades[title])/len(self._grades))*self._classgpa[title]
+        def calculateSection(self,title):
+            return (sum(self._grades[title])/len(self._grades[title]))*self._classgpa[title]
+        def calculateAverage(self,title):
+            return sum(self._grades[title])/len(self._grades[title])
         def pullSections(self):
             return list(self._classgpa.keys())
         def calculateGroupGradeRequired(self,title):
@@ -66,7 +76,7 @@ class WeightedGPA:
             currentgrade=self.calculateCurrentGrade()
             numberoftotalgrades=len(self._grades[title])+1
             totalgradesofcurrentsection=sum(self._grades[title])
-            gradeswithoutsection=currentgrade-self.calcualteSection(title)
+            gradeswithoutsection=currentgrade-self.calculateSection(title)
             minresult=gradeswithoutsection+(percentage*(totalgradesofcurrentsection/(numberoftotalgrades)))
             maxresult=gradeswithoutsection+(percentage*((totalgradesofcurrentsection+100)/(numberoftotalgrades)))
             for element in list(grades):
@@ -91,12 +101,12 @@ class WeightedGPA:
                 elif current<=0:
                     container+=f'{element} grade guaranteed\n'
                 else:
-                    finalrequired=math.ceil(left/percentage)
+                    finalrequired=math.ceil((left/percentage)*100)
                     container+=f'{element} Grade requires {finalrequired} in {title}\n'
             print(container)
         def checkAmountNotGrades(self):
             emptysections=[]
-            for element in self._clsasgpa:
+            for element in self._classgpa:
                 if not self._grades.get(element):
                     emptysections.append(element)
             return emptysections
@@ -105,7 +115,7 @@ class WeightedGPA:
             if len(empty)>1 or (title not in empty and len(empty)==1):
                 print(f'Can only calculate possible final grades if:\n1) There is only one section with an empty grade (and the user targets that section)\n2)There no empty sections other than the final one needed to be calcuated (assuming that there is another grade for that section that needs to be entered)\n. Please check your inputted grades again\n')
             else:
-                if len(self._grades[title])>1:
+                if self._grades.get(title) and len(self._grades[title])>1:
                     self.calculateGroupGradeRequired(title)
                 else: 
                     self.calculateInidivualGradeRequired(title)
@@ -114,20 +124,23 @@ class WeightedGPA:
             for element in list(self._classgpa):
                 container.append([f'section',element,str(self._classgpa[element])])
             for element in list(self._grades):
-                container.append([f'grade',element,','.join(map(str,self._grades[element]))])
+                container.append([f'grade',element,'|'.join(map(str,self._grades[element]))])
             return container
         def __str__(self):
             container=''
-
             for element in self.pullSections():
-                    section=self._classgpa[element]
+                    section=element
+                    sectionpercentage=self._classgpa[element]
                     try:
                         grades=self._grades[element]
+                        average=self.calculateSection(element)
+                        container+=f'{section}:\n\tGrades Earned:{grades}\n'
+                        container+=f'\tAverage:{self.calculateAverage(element)}\n'
                     except:
                         grades=f'None Entered'
-                    average=self.calculateSection(element)
-                    container+=f'{section}:\n\tGrades Earned:{grades}\n'
-                    container+=f'\tAverage:{average/self._classgpa[element]}\n'
+                        average=f'Could Not be Calculated'
+                        container+=f'{element} [%{sectionpercentage}]:\n\tGrades Earned:{grades}\n'
+                        container+=f'\tAverage:{average}\n'
             container+=f'Current Weighted Final grade:{self.getFinalGrade()}'
             return container  
 

@@ -22,7 +22,11 @@ class UserInterface:
     def intro(self):
         print(f'Welcome to the GPA calculator. This is to assist in calculating GPAs in specific classes that use the weighted GPA system (with percentages)]\n')
     def fileMenu(self):
-        self.showFiles()
+        if self.isEmptyDir():
+            print(f'Directory Contains no courses')
+        else:
+            amount=len(self._directoryfiles)
+            print(f'{amount} course(s) found in directory')
         choice=self.sanitizeInput(input(f'Please choose from the following options:\n1: create class file\n2: load class file\n3: Delete Class File\n'),'MAIN')
         if choice==1:
             self.createCourse()
@@ -45,11 +49,9 @@ class UserInterface:
     def isEmptyDir(self):
         return len(self._directoryfiles)==0
     def showFiles(self):
-        if self.isEmptyDir():
-            print(f'No Course files have been created yet!')
-        else:
             counter=0
             for file in self._directoryfiles:
+                counter+=1
                 print(f'{counter}) {file}')
     def selectFile(self):
         self.showFiles()
