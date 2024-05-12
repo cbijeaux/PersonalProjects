@@ -51,7 +51,10 @@ class WeightedGPA:
                 if message:
                     print(f'Grade of {grade} added to {title}')
         def pullGrades(self,title):
-            return self._grades[title]
+            if self._grades.get(title):
+                return self._grades[title]
+            else:
+                return f'No Grades Yet Entered'
         def addBatchGrades(self,title,batchofgrades,message=True): 
             for grade in batchofgrades:
                 self.addGrades(title,grade,message)

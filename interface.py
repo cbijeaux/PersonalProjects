@@ -175,15 +175,19 @@ class UserInterface:
         for element in self._gpa.pullSections():
             counter+=1
             print(f'{counter}) {element}')
-        choice=self.sanitizeInput(input(f'Please choose a section to add a grade for above:\n'),'SUB')-1
-        grade=input(f'Please enter either a singular grade earned or multiple grades with comma as the separator\n')
-        if choice>=counter or choice<=-1:
+        try:
+            choice=self.sanitizeInput(input(f'Please choose a section to add a grade for above:\n'),'SUB')-1
+            print(f'Current Grades Entered: {self._gpa.pullGrades(self._gpa.pullSections()[choice])}')
+            grade=input(f'Please enter either a singular grade earned or multiple grades with comma as the separator\n')
+            if choice>=counter or choice<=-1:
+                self.crashMessage('INVALIDSUBCHOICE')
+            elif ',' in grade:
+                self._gpa.addBatchGrades(self._gpa.pullSections()[choice],map(int,grade.strip().split(',')))
+            else:
+                self._gpa.addGrades(self._gpa.pullSections()[choice],int(grade))
+            self.pressToContinue()
+        except:
             self.crashMessage('INVALIDSUBCHOICE')
-        elif ',' in grade:
-            self._gpa.addBatchGrades(self._gpa.pullSections()[choice],map(int,grade.strip().split(',')))
-        else:
-            self._gpa.addGrades(self._gpa.pullSections()[choice],int(grade))
-        self.pressToContinue()
     def loadCourse(self,filename):
         if '.txt' not in filename:
             filename+='.txt'
