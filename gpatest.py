@@ -42,8 +42,7 @@ class WeightedGPA:
             elif current+(percentage*100)<grade[element]:
                 grade[element]= f'Grade Impossible'
             else:
-                needed=section.whatIsNeeded((percentage*100)-(grade[element]-grade))
-                grade[element]=needed
+                grade[element]=section.whatIsNeeded((percentage*100)-(grade[element]-grade))
             return grade
     def confirmSingleEmpty(self,target):
         if self.checkEmpty()==1 and self._sections[target].amountEmpty()==1:
