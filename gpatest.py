@@ -36,20 +36,20 @@ class WeightedGPA:
         section=self._section[targetsection]
         current=self.CurrentFinalPoints()-section.getSectionPoints()
         percentage=section.getPercentage()
-        if self.confirmEmpty(targetsection):
-            for element in list(grade.keys()):
-                if current>=grade[element]:
-                    grade[element]= f'Grade Guaranteed'
-                elif current+(percentage*100)<grade[element]:
-                    grade[element]= f'Grade Impossible'
-                else:
-                    needed=section.whatIsNeeded((percentage*100)-(grade[element]-grade))
-                    grade[element]=needed
+        for element in list(grade.keys()):
+            if current>=grade[element]:
+                grade[element]= f'Grade Guaranteed'
+            elif current+(percentage*100)<grade[element]:
+                grade[element]= f'Grade Impossible'
+            else:
+                needed=section.whatIsNeeded((percentage*100)-(grade[element]-grade))
+                grade[element]=needed
             return grade
+    def confirmSingleEmpty(self,target):
+        if self.checkEmpty()==1 and self._sections[target].amountEmpty()==1:
+            return True
         else:
-            return False #FIX LATER
-
-
+            return False
     def checkEmpty(self):
         totalempty=0
         for element in list(self._section.keys()):
@@ -101,7 +101,7 @@ class SectionGPA:
                 currentempty+=1
         return currentempty
     def getAggregateSectionGrades(self):
-        return sum(self._assignments)
+        return sum(self.getAssignments())
     def changeAssignment(self,newgrade,index=0):
         self._assignments[index]=newgrade
     def deleteAssignment(self,index=-1):
