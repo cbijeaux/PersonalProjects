@@ -1,8 +1,0 @@
-section,homework,15
-section,quizes,15
-section,midterm,30
-section,project,40
-grade,homework,90|100
-grade,quizes,80|100
-grade,midterm,81|74
-grade,project,100

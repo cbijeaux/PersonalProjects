@@ -1,0 +1,4 @@
+section,participation,10
+section,project,20
+section,assignments,25
+section,exams,45

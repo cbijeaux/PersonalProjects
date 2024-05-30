@@ -1,0 +1,6 @@
+section,Discussion,5
+section,lab exercise,20
+section,assignment,20
+section,quizzes,10
+section,exam one,20
+section,exam two,25
