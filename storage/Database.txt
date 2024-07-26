@@ -1,0 +1,11 @@
+section,Discussion,5
+section,lab,20
+section,assignment,20
+section,quizes,10
+section,exam1,20
+section,exam2,25
+grade,assignment,100|100|100|100
+grade,lab,100|100|100
+grade,Discussion,100|100
+grade,exam1,64
+grade,quizes,100
